@@ -3,8 +3,9 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Sparkles, PartyPopper, Stars, Award, Gift } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useTaxData } from "@/context/TaxDataContext";
 
 const ConfettiPiece = ({ delay }: { delay: number }) => {
   const colors = ["#FF5E5B", "#D65DB1", "#845EC2", "#FFC75F", "#F9F871", "#00C2A8", "#4FC1E9", "#B88DFF"];
@@ -73,11 +74,20 @@ const FloatingElement = ({ children, delay, x }: { children: React.ReactNode, de
 
 const SuccessPage: React.FC = () => {
   const [showStars, setShowStars] = useState(false);
-
+  const navigate = useNavigate();
+  const { setCurrentStep, setIsSubmitted } = useTaxData();
+  
   useEffect(() => {
     const timer = setTimeout(() => setShowStars(true), 500);
     return () => clearTimeout(timer);
   }, []);
+  
+  // Function to handle returning to the beginning
+  const handleReturnHome = () => {
+    setCurrentStep(1); // Reset to the first step
+    setIsSubmitted(false); // Reset the submitted state
+    navigate('/'); // Navigate to the home page
+  };
 
   return (
     <div className="relative w-full max-w-lg mx-auto mt-8">
@@ -211,13 +221,13 @@ const SuccessPage: React.FC = () => {
               whileHover={{ scale: 1.05 }}
             >
               <Button
-                asChild
+                onClick={handleReturnHome}
                 className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 px-8 py-6 text-lg shadow-lg transition-all duration-300 hover:shadow-xl"
               >
-                <Link to="/" className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <PartyPopper className="h-5 w-5" />
                   Return Home
-                </Link>
+                </div>
               </Button>
             </motion.div>
           </CardContent>
@@ -228,3 +238,4 @@ const SuccessPage: React.FC = () => {
 };
 
 export default SuccessPage;
+
